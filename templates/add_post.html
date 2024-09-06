@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% block content %} {% for message in
+    get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ message }}<button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+
+    {% if current_user.is_authenticated %}
+
+    <h1>Criar novo post</h1>
+<br />
+<div class="shadow p-3 mb-5 bg-body-primary rounded">
+  <form method="POST">
+    {{ form.hidden_tag() }} {{ form.title.label(class="form-label") }} {{
+    form.title(class="form-control") }} <br />
+    {{ form.author.label(class="form-label") }} {{
+        form.author(class="form-control") }} <br />
+    {{ form.slug.label(class="form-label") }} {{
+    form.slug(class="form-control") }} <br />
+    {{ form.content.label(class="form-label") }} {{
+        form.content(class="form-control", rows="8") }} <br />
+    <br/> {{ form.submit(class="btn btn-dark") }}
+  </form>
+</div>
+{% else %}
+<h2>É necessário fazer o login...</h2>
+<p> Desculpa, mas você precisa estar logado para acessar esta página!</p>
+
+<a href="{{ url_for('login') }}" >Entrar aqui</a>
+{% endif %}
+    
+    {% endblock %}

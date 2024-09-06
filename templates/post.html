@@ -1,0 +1,100 @@
+{% extends 'base.html' %} {% block content %} {% for message in
+get_flashed_messages() %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ message }}<button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+{% endfor %}
+<br />
+<div class="shadow p-3 mb-5 bg-body rounded" style="cursor: pointer">
+  <h2>{{ post.title }}</h2>
+  <small style="display: flex; justify-content: space-between">
+    <span>by @{{ post.poster.username }}</span>
+    <span>{{ post.date_posted }}</span>
+  </small>
+  <br />
+  {{ post.content }} <br /> <br/>
+  <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-secondary btn-sm">Editar</a>
+  <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-danger btn-sm" 
+    onclick="return confirm('Tem certeza que deseja deletar este post?');">Deletar</a>
+  <a href="{{ url_for('posts') }}" class="btn btn-secondary btn-sm">Voltar</a>
+  <br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+<br />
+
+{% endblock %}

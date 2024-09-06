@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% block content %} {% for message in
+get_flashed_messages() %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+{% endfor %}
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Perfil do Usuário</h5>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      <strong>Nome:</strong> {{ current_user.name }}<br />
+      <strong>Username:</strong> {{ current_user.username }}<br />
+      <strong>User ID:</strong> {{ current_user.id }}<br />
+      <strong>Email:</strong> {{ current_user.email }}<br />
+      <strong>Entrou em:</strong> {{ current_user.date_added }}<br />
+    </p>
+    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm"
+      >Logout</a
+    >
+    <a
+      href="{{ url_for('delete', id=current_user.id) }}"
+      class="btn btn-danger btn-sm"
+      onclick="return confirm('Tem certeza que deseja deletar este Usuário?');"
+      >Apagar Conta</a
+    >
+  </div>
+</div>
+
+<br /><br />
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Atualizar Dados</h5>
+  </div>
+  <div class="card-body">
+    <form action="/dashboard" method="POST">
+      {{ form.hidden_tag() }} {{ form.name.label(class="form-label") }} {{
+      form.name(class="form-control", value = name_to_update.name) }} <br />
+      {{ form.username.label(class="form-label") }} {{
+      form.username(class="form-control", value = name_to_update.username) }}
+      <br />
+      {{ form.email.label(class="form-label") }} {{
+      form.email(class="form-control", value = name_to_update.email) }} <br />
+      {{ form.submit(class="btn btn-dark btn-sm") }}
+    </form>
+  </div>
+
+  {% endblock %}
+</div>

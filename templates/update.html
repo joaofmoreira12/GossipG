@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block content %} {% for message in
+get_flashed_messages() %}
+
+{% endfor %} 
+
+
+
+
+
+{% if name %}
+
+<h1>Olá {{ name|capitalize }}!!</h1>
+
+{%else%}
+
+<h1>Atualizar Usuário</h1>
+<br />
+{% if id == current_user.id %}
+<div class="shadow p-3 mb-5 bg-body-primary rounded">
+  <form action="/update/{{ name_to_update.id }}" method="POST">
+    {{ form.hidden_tag() }} {{ form.name.label(class="form-label") }} {{
+    form.name(class="form-control", value = name_to_update.name) }} <br />
+    {{ form.username.label(class="form-label") }} {{
+    form.username(class="form-control", value = name_to_update.username) }}
+    <br />
+    {{ form.email.label(class="form-label") }} {{
+    form.email(class="form-control", value = name_to_update.email) }} <br />
+    {{ form.submit(class="btn btn-dark btn-sm") }}
+    <a
+      href="{{ url_for('delete', id=name_to_update.id) }}"
+      class="btn btn-danger btn-sm"
+      onclick="return confirm('Tem certeza que deseja deletar este Usuário?');"
+      >Deletar</a
+    >
+  </form>
+</div>
+{% endif %}
+<br /><br /><br />
+
+{% else %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  Desculpa! Você não pode editar esse usuário...<button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+<h2> Acesso Negado! </h2>
+<p> Desculpe, você não pode acessar este perfil!  </p>
+
+
+
+{% endif %} 
+
+{% endblock %}

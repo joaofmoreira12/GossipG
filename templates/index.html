@@ -1,8 +1,21 @@
-<h1>HELLO GUYS!</h1>
+{% extends 'base.html' %} {% block content %}
 
-<p>Essa é minha primeira página online :)</p>
+<h2>Olá, futuros engenheiros</h2>
 
-<h3><strong>LISTA DE PIZZAS FAVORITAS</strong></h3>
+<p style="text-align: justify;">
+  Olá, futuros engenheiros e engenheiras da FGA. Achavam que estavam a salvo
+  dos olhares curiosos? Pensem novamente. Sou eu, a Gossip Girl, e dessa vez
+  estou de olho em vocês. Esqueçam a Park Avenue, agora o palco das maiores
+  intrigas, amores proibidos e reviravoltas épicas é o campus da UNB - FGA. Das
+  disputas acadêmicas às alianças inesperadas, nada escapa do meu radar. Quem
+  está namorando quem? Quem são os novos prodígios ou, melhor ainda, quem está
+  por um fio? As festas secretas, as notas forjadas, as paixões de
+  laboratório... preparem-se para ver tudo isso exposto. Então, limpem suas
+  redes sociais e revisem suas histórias de ontem à noite, porque a Gossip Girl
+  está de volta, e desta vez, o drama é todo de vocês.
+  <p style="padding-left: 1150px">- XOXO, Gossip Girl</p>
+  <br/>
+  <img src="{{ url_for('static', filename='images/gossip.png') }}" width="1300">
+</p>
 
-{% for topping in favorite_pizzaa|reverse %} {{topping}}<br />
-{% endfor %}
+{% endblock %}
