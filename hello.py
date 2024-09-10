@@ -5,10 +5,13 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from webforms import LoginForm, PostForm, UserForm, PasswordForm, NameForm
+from webforms import LoginForm, PostForm, UserForm, PasswordForm, NameForm, SearchForm
+from flask_ckeditor import CKEditor
 
 # Criando uma instância
 app = Flask(__name__)
+#Adicionando o CKEditor
+CKEditor = CKEditor(app)
 # Novo Banco de Dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/users'
 # Senha Secreta
@@ -22,9 +25,43 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Passando as informações para o Navbar
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form = form)
+
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
+
+# Criando Página do Administrador
+@app.route('/admin')
+@login_required
+def admin():
+    id = current_user.id
+    if id == 21:
+        return render_template("admin.html")
+    else:
+        flash("Desculpe, mas parece que você não é a gossip girl!")
+        return redirect(url_for("index.html"))
+
+#Criar uma função de pesquisar
+@app.route('/search', methods=["POST"])
+def search():
+    form = SearchForm()
+    posts = Posts.query
+    if form.validate_on_submit():
+        #Pegar dados no formulário de submissão
+        post.searched = form.searched.data
+        #Consultar o banco de dados
+        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+        posts = posts.order_by(Posts.title).all()
+
+        return render_template("search.html", 
+                               form = form,
+                               posts = posts,
+                               searched = post.searched)
 
 # Criando a página de login
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,7 +108,7 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(280))
     content = db.Column(db.Text)
-    author = db.Column(db.String(280))
+    #author = db.Column(db.String(280))
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     slug = db.Column(db.String(280))
     # Chave estrangeira para vincular usuários (referência à chave primária do usuário)
@@ -105,11 +142,17 @@ def edit_post(id):
         db.session.commit()
         flash('Post editado com sucesso!')
         return redirect(url_for('post', id=post.id))
-    form.title.data = post.title
-    #form.author.data = post.author
-    form.slug.data = post.slug
-    form.content.data = post.content
-    return render_template('edit_post.html', form=form)
+    
+    if current_user.id == post.poster_id:
+        form.title.data = post.title
+        #form.author.data = post.author
+        form.slug.data = post.slug
+        form.content.data = post.content
+        return render_template('edit_post.html', form=form)
+    else:
+        flash("Vocẽ não está autorizado a editar esse post")
+        posts = Posts.query.order_by(Posts.date_posted.desc())
+        return render_template("posts.html", posts=posts)
 
 # Adicionar Página de Post
 @app.route('/add_post', methods=['GET', 'POST'])

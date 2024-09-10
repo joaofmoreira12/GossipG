@@ -1,16 +1,13 @@
-{% extends 'base.html' %} {% block content %} {% for message in
-get_flashed_messages() %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  {{ message }}<button
-    type="button"
-    class="btn-close"
-    data-bs-dismiss="alert"
-    aria-label="Close"
-  ></button>
-</div>
-{% endfor %}
+{% extends 'base.html' %} {% block content %}
 
-<h1>Posts do Blog</h1>
+<br />
+<h2>
+  <strong>Você pesquisou por: <em>{{ searched }}</em></strong>
+</h2>
+<br />
+{% if posts %}
+
+{% for post in posts %}
 
 {% for post in posts %}
 <a href="{{ url_for('post', id=post.id) }}" class="post-link">
@@ -40,4 +37,14 @@ get_flashed_messages() %}
 </a>
 <br />
 
-{% endfor %} {% endblock %}
+{% endfor %}
+
+{% endfor %} 
+
+{% else %}
+
+<p>Desculpe, não encontramos nenhuma fofoca que envolva <strong>{{ searched }}</strong>.</p>
+
+{% endif %}
+
+{% endblock %}

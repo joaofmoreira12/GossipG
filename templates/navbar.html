@@ -18,30 +18,31 @@
           <a class="nav-link" href="{{url_for('add_post')}}">Criar novo Post</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('posts')}}"
-            >Posts</a
+          <a class="nav-link" href="{{url_for('posts')}}">Posts</a>
+        </li>
+
+        {% if current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('dashboard') }}"
+            >Perfil do usuário</a
           >
         </li>
-        
-        {% if current_user.is_authenticated %}
-          <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('dashboard') }}">Perfil do usuário</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-          </li>
-        {% else %}
-  
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{url_for('add_user')}}"
-              >Cadastro</a
-            >
-          </li>
+        {% if current_user.id == 21 %}
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('login')}}"
-            >Login</a
-          >
+          <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+        {% else %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('add_user')}}">Cadastro</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('login')}}">Login</a>
         </li>
 
         {% endif %}
@@ -49,12 +50,21 @@
           <a class="nav-link" href="{{url_for('name')}}">Nome</a>
         </li>
       </ul>
-      <form class="d-flex" role="search">
+      <form
+        method="POST"
+        action="{{ url_for('search') }} "
+        class="d-flex"
+        role="search"
+      >
+        {{ form.hidden_tag() }}
         <input
           class="form-control me-2"
           type="search"
           placeholder="Search"
           aria-label="Search"
+          ,
+          name="searched"
+        />
         />
         <button class="btn btn-outline-light" type="submit">Search</button>
       </form>

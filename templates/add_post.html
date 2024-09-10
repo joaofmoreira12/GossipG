@@ -18,14 +18,14 @@
   <form method="POST">
     {{ form.hidden_tag() }} {{ form.title.label(class="form-label") }} {{
     form.title(class="form-control") }} <br />
-    {{ form.author.label(class="form-label") }} {{
-        form.author(class="form-control") }} <br />
     {{ form.slug.label(class="form-label") }} {{
     form.slug(class="form-control") }} <br />
     {{ form.content.label(class="form-label") }} {{
         form.content(class="form-control", rows="8") }} <br />
     <br/> {{ form.submit(class="btn btn-dark") }}
   </form>
+  {{ ckeditor.load() }}
+  {{ ckeditor.config(name='content') }}
 </div>
 {% else %}
 <h2>É necessário fazer o login...</h2>

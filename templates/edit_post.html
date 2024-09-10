@@ -21,6 +21,8 @@ get_flashed_messages() %}
     <br />
     {{ form.submit(class="btn btn-dark") }}
   </form>
+  {{ ckeditor.load() }}
+  {{ ckeditor.config(name='content') }}
 </div>
 <br />
 
