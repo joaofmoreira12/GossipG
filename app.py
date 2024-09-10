@@ -110,7 +110,7 @@ def dashboard():
         name_to_update.profile_pic = pic_name
         try:
             db.session.commit()
-            saver.save(os.path.join(app.config['UPLOAD_FOLDER']), pic_name)
+            saver.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
             flash("Dados do usuário atualizados com sucesso!")
         except:
             flash("Erro. Tente novamente")
@@ -294,18 +294,23 @@ def add_user():
 # Deletar um usuário
 @app.route('/delete/<int:id>')
 @login_required
+
 def delete(id):
-    name = None
-    form = UserForm()
-    user_to_delete = Users.query.get_or_404(id)
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("Usuário deletado com sucesso!")
-    except:
-        flash("Ops! Não foi possível deletar o usuário!")
-    our_users = Users.query.order_by(Users.date_added).all()
-    return render_template("add_user.html", name=name, our_users=our_users, form=form)
+    if id == current_user.id:
+        name = None
+        form = UserForm()
+        user_to_delete = Users.query.get_or_404(id)
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("Usuário deletado com sucesso!")
+        except:
+            flash("Ops! Não foi possível deletar o usuário!")
+        our_users = Users.query.order_by(Users.date_added).all()
+        return render_template("add_user.html", name=name, our_users=our_users, form=form)
+    else:
+        flash('Desculpa, você não é a Gossip Girl')
+        return redirect (url_for('dashboard'))
 
 
 #Atualização: Apenas o usuário que criou o post pode deletar ele.
