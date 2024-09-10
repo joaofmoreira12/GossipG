@@ -7,6 +7,8 @@ from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, PostForm, UserForm, PasswordForm, NameForm, SearchForm
 from flask_ckeditor import CKEditor
+from werkzeug.utils import secure_filename
+import uuid as uuid
 
 # Criando uma instância
 app = Flask(__name__)
@@ -16,6 +18,7 @@ CKEditor = CKEditor(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/users'
 # Senha Secreta
 app.config['SECRET_KEY'] = "12345678"
+app.config['UPLOAD_FOLDER'] = 'static/images/'
 # Iniciando o banco de dados
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -96,8 +99,18 @@ def dashboard():
         name_to_update.name = request.form['name']
         name_to_update.username = request.form['username']
         name_to_update.email = request.form['email']
+        name_to_update.profile_pic = request.files['profile_pic']
+        #Pegar nome da imagem
+        pic_filename = secure_filename(name_to_update.profile_pic.filename)
+        #Set UUID
+        pic_name = str(uuid.uuid1()) + '_' + pic_filename
+        #Salvando a imagem 
+        saver = request.files['profile_pic']
+        #Mudando para uma string para salvar no banco de dados
+        name_to_update.profile_pic = pic_name
         try:
             db.session.commit()
+            saver.save(os.path.join(app.config['UPLOAD_FOLDER']), pic_name)
             flash("Dados do usuário atualizados com sucesso!")
         except:
             flash("Erro. Tente novamente")
@@ -185,6 +198,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    profile_pic = db.Column(db.String(255), nullable=True)
     # Relacionamento com posts
     poster = db.relationship('Posts', backref='poster')
 
@@ -254,18 +268,6 @@ def teste_pw():
 
     return render_template("test_pw.html", email=email, password=password, pw_to_check=pw_to_check, passed=passed, form=form)
 
-# Criando a rota da página Name
-@app.route('/name', methods=['GET', 'POST'])
-def name():
-    name = None
-    form = NameForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ''
-        flash("Enviado com Sucesso!")
-
-    return render_template("name.html", name=name, form=form)
-
 # Criando a rota da página "cadastro"
 @app.route('/user/cadastro', methods=['GET', 'POST'])
 def add_user():
@@ -277,7 +279,7 @@ def add_user():
             hashed_pw = generate_password_hash(form.password_hash.data, "pbkdf2:sha256")
             user = Users(name=form.name.data, email=form.email.data, username=form.username.data, password_hash=hashed_pw)
             db.session.add(user)
-            db.session.commit()
+            db.session.commit()                         
         name = form.name.data
         form.name.data = ''
         form.username.data = ''

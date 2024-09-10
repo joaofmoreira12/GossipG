@@ -17,10 +17,14 @@ get_flashed_messages() %}
   </div>
   <div class="card-body">
     <p class="card-text">
+
+
+
       <strong>Nome:</strong> {{ current_user.name }}<br />
       <strong>Username:</strong> {{ current_user.username }}<br />
       <strong>User ID:</strong> {{ current_user.id }}<br />
       <strong>Email:</strong> {{ current_user.email }}<br />
+      <strong>Foto de Perfil:</strong> {{ current_user.profile_pic }}<br />
       <strong>Entrou em:</strong> {{ current_user.date_added }}<br />
     </p>
     <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm"
@@ -30,18 +34,19 @@ get_flashed_messages() %}
       href="{{ url_for('delete', id=current_user.id) }}"
       class="btn btn-danger btn-sm"
       onclick="return confirm('Tem certeza que deseja deletar este Usuário?');"
-      >Apagar Conta</a
-    >
+      >Apagar Conta</a>
+      <br/><br/><br/><br/>
+    
   </div>
 </div>
 
-<br /><br />
+<br />
 <div class="card">
   <div class="card-header">
     <h5 class="card-title">Atualizar Dados</h5>
   </div>
   <div class="card-body">
-    <form action="/dashboard" method="POST">
+    <form action="/dashboard" method="POST" enctype="multipart/form-data">
       {{ form.hidden_tag() }} {{ form.name.label(class="form-label") }} {{
       form.name(class="form-control", value = name_to_update.name) }} <br />
       {{ form.username.label(class="form-label") }} {{
@@ -49,9 +54,18 @@ get_flashed_messages() %}
       <br />
       {{ form.email.label(class="form-label") }} {{
       form.email(class="form-control", value = name_to_update.email) }} <br />
+      {{ form.profile_pic.label(class="form-label") }} {{
+        form.profile_pic(class="form-control", value = name_to_update.profile_pic) }} <br />
       {{ form.submit(class="btn btn-dark btn-sm") }}
     </form>
   </div>
+  
+</div>
+<div class="col-4">
+  <img src="{{ url_for('static', filename='images/gossipgirl1.jpg') }}" class="img-fluid" style="width: 200px; position: absolute; top: 150px; right: 150px;" alt="Imagem Gossip Girl">
+
+
+
 
   {% endblock %}
 </div>

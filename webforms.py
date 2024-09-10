@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField, Valid
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
 from flask_ckeditor import CKEditorField
-
+from flask_wtf.file import FileField
 
 #Criando o formulário de Pesquisa
 
@@ -36,6 +36,7 @@ class UserForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password_hash = PasswordField('Senha', validators= [DataRequired(), EqualTo('password_hash2', message='As senhas devem ser iguais!')])
     password_hash2 = PasswordField('Confirme sua senha', validators= [DataRequired()])
+    profile_pic = FileField("Profile Pic")
     submit = SubmitField("Enviar")
 
     # Criando a classe formulário da senha
