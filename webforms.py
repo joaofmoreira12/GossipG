@@ -45,9 +45,3 @@ class PasswordForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password_hash = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Enviar")
-
-    # Criando uma classe formulário de nome
-
-class NameForm(FlaskForm):
-    name = StringField("Qual é o seu nome?", validators=[DataRequired()])
-    submit = SubmitField("Enviar")

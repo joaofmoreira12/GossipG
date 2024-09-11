@@ -1,103 +1,66 @@
-{% extends 'base.html' %} {% block content %} {% for message in
-get_flashed_messages() %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  {{ message }}<button
-    type="button"
-    class="btn-close"
-    data-bs-dismiss="alert"
-    aria-label="Close"
-  ></button>
+{% extends 'base.html' %}
+
+{% block content %}
+
+{%for message in get_flashed_messages()%}
+    
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+
+{%endfor%}
+
+<h1>Blog Posts</h1>
+</br>
+
+
+<div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+
+    <h2>{{post.title}}</h2></br>
+    By: {{post.poster.name}}</br>
+    {{post.date_posted}}</br>
+    {{post.content|safe}}</br></br>
+
+    <div class="card mb-3">
+        <div class="row no-gutters">
+            <div class="col-md-2">
+                {% if post.poster.profile_pic %}
+                <img src="{{ url_for('static', filename='images/' + post.poster.profile_pic)}}" width="150" align="left">
+
+                {%else%}
+                <img src="{{ url_for('static', filename='images/receitas.png') }}" width="150" align="left">
+                
+                    
+                {%endif%}
+            </div>
+    
+            <div class="col-md-10">
+                <div class="card-body">
+                    <h5 class="card-title">{{post.poster.name}}</h5>
+    
+                    
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   
 </div>
-{% endfor %}
-<br />
-<div class="shadow p-3 mb-5 bg-body rounded" style="cursor: pointer">
-  <h2>{{ post.title }}</h2>
-  <small style="display: flex; justify-content: space-between">
-    <span>by @{{ post.poster.username }}</span>
-    <span>{{ post.date_posted }}</span> 
-  </small>
-  <br />
-  {{ post.content|safe }} <br /> <br/>
+{% if post.poster_id == current_user.id %}
 
-  {% if post.poster_id == current_user.id %}
-    <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-secondary btn-sm">Editar</a>
-    <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-danger btn-sm" 
-      onclick="return confirm('Tem certeza que deseja deletar este post?');">Deletar</a>
-  {% endif %}
-  <a href="{{ url_for('posts') }}" class="btn btn-secondary btn-sm">Voltar</a>
-  <br />
+<a href="{{url_for('edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm ">Editar</a>
 
+<a href="{{url_for('delete_post', id=post.id)}}" class="btn btn-outline-danger btn-sm ">Deletar</a>
+{%endif%}
+<a href="{{url_for('posts')}}" class="btn btn-outline-secondary btn-sm ">De volta ao blog</a>
+</br>
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-</div>
-<br />
-
-{% endblock %}
+{%endblock%}

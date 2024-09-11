@@ -5,7 +5,7 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from webforms import LoginForm, PostForm, UserForm, PasswordForm, NameForm, SearchForm
+from webforms import LoginForm, PostForm, UserForm, PasswordForm, SearchForm
 from flask_ckeditor import CKEditor
 from werkzeug.utils import secure_filename
 import uuid as uuid
@@ -95,26 +95,46 @@ def dashboard():
     form = UserForm()
     id = current_user.id
     name_to_update = Users.query.get_or_404(id)
+
     if request.method == "POST":
+        # Atualizando os campos de texto
         name_to_update.name = request.form['name']
-        name_to_update.username = request.form['username']
         name_to_update.email = request.form['email']
-        name_to_update.profile_pic = request.files['profile_pic']
-        #Pegar nome da imagem
-        pic_filename = secure_filename(name_to_update.profile_pic.filename)
-        #Set UUID
-        pic_name = str(uuid.uuid1()) + '_' + pic_filename
-        #Salvando a imagem 
-        saver = request.files['profile_pic']
-        #Mudando para uma string para salvar no banco de dados
-        name_to_update.profile_pic = pic_name
-        try:
+        name_to_update.username = request.form['username']
+        name_to_update.about_author = request.form.get('about_author', '')
+
+        # Verificando se há uma imagem de perfil para upload
+        if 'profile_pic' in request.files:
+            profile_pic = request.files['profile_pic']
+
+            # Somente processar se uma imagem for enviada
+            if profile_pic.filename != '':
+                # Pegar o nome da imagem e gerar um nome único
+                pic_filename = secure_filename(profile_pic.filename)
+                pic_name = str(uuid.uuid1()) + "_" + pic_filename
+
+                # Definir o caminho para salvar a imagem
+                name_to_update.profile_pic = pic_name
+
+                # Salvar a imagem na pasta especificada
+                try:
+                    db.session.commit()
+                    profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+                    flash("Dados do usuário e imagem atualizados com sucesso!")
+                except Exception as e:
+                    flash(f"Erro ao salvar os dados: {str(e)}")
+                    return render_template("dashboard.html", form=form, name_to_update=name_to_update)
+
+        else:
+            # Caso não haja imagem para salvar, apenas salvar as outras informações
             db.session.commit()
-            saver.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
             flash("Dados do usuário atualizados com sucesso!")
-        except:
-            flash("Erro. Tente novamente")
-    return render_template("dashboard.html", form=form, name_to_update=name_to_update)
+
+        return render_template("dashboard.html", form=form, name_to_update=name_to_update)
+
+    else:
+        return render_template("dashboard.html", form=form, name_to_update=name_to_update, id=id)
+
 
 # Criando o Modelo de Post do Blog
 class Posts(db.Model):
@@ -156,7 +176,7 @@ def edit_post(id):
         flash('Post editado com sucesso!')
         return redirect(url_for('post', id=post.id))
     
-    if current_user.id == post.poster_id:
+    if current_user.id == post.poster_id or current_user.id == 21:
         form.title.data = post.title
         #form.author.data = post.author
         form.slug.data = post.slug
@@ -310,7 +330,7 @@ def delete(id):
         return render_template("add_user.html", name=name, our_users=our_users, form=form)
     else:
         flash('Desculpa, você não é a Gossip Girl')
-        return redirect (url_for('dashboard'))
+        return redirect (url_for('dashboard')) 
 
 
 #Atualização: Apenas o usuário que criou o post pode deletar ele.
@@ -319,7 +339,7 @@ def delete(id):
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
     id = current_user.id
-    if id == post_to_delete.poster.id:
+    if id == post_to_delete.poster.id or id == 21:
         try:
             db.session.delete(post_to_delete)
             db.session.commit()
