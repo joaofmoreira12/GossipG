@@ -2,6 +2,26 @@
 
 {% block content %}
 
- <h2>Página do Administrador</h2>
+ <h1>Página do Administrador</h1>
+ <h2>Lista de Usuários</h2>
+
+ <table class="table table-striped table-hover table-bordered">
+    {% for our_user in our_users %}
+    <tr>
+      <td>
+        {{ our_user.id }}.
+        <a href="{{url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> -
+        {{ our_user.username}} - {{ our_user.email}}
+        <!-- PW: {{ our_user.password_hash }} - -->
+        <a
+          href="{{ url_for('delete', id=our_user.id) }}"
+          class="btn btn-danger btn-sm"
+          onclick="return confirm('Tem certeza que deseja deletar este Usuário?');"
+          >Deletar</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
 
 {% endblock %}

@@ -43,10 +43,15 @@ def load_user(user_id):
 @login_required
 def admin():
     id = current_user.id
+    print(f"ID atual do usuário: {id}")
+    our_users = Users.query.order_by(Users.date_added).all()
     if id == 21:
-        return render_template("admin.html")
-    else:
+        print(f"ID atual do usuário: {id}")
+        return render_template("admin.html", our_users = our_users)
+    
+    elif(id != 21):
         flash("Desculpe, mas parece que você não é a gossip girl!")
+        print(f"ID atual do usuário: {id}")
         return redirect(url_for("index.html"))
 
 #Criar uma função de pesquisar
@@ -316,7 +321,8 @@ def add_user():
 @login_required
 
 def delete(id):
-    if id == current_user.id:
+    if current_user.id == id or current_user.id == 21:
+        print(f"ID atual do usuário: {id}")
         name = None
         form = UserForm()
         user_to_delete = Users.query.get_or_404(id)
@@ -324,12 +330,20 @@ def delete(id):
             db.session.delete(user_to_delete)
             db.session.commit()
             flash("Usuário deletado com sucesso!")
+            if current_user.id == 21:
+                flash("Usuário deletado com sucesso pela Gossip Girl!")
+                return redirect(url_for('admin'))
+            else:
+                logout_user()  # Fazer logout após deletar a conta
+                flash("Sua conta foi deletada com sucesso!")
+                return redirect(url_for('index'))
         except:
             flash("Ops! Não foi possível deletar o usuário!")
         our_users = Users.query.order_by(Users.date_added).all()
         return render_template("add_user.html", name=name, our_users=our_users, form=form)
     else:
         flash('Desculpa, você não é a Gossip Girl')
+        print(f"ID atual do usuário: {id}")
         return redirect (url_for('dashboard')) 
 
 
